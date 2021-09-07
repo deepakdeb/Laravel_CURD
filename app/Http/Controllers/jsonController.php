@@ -41,10 +41,7 @@ class jsonController extends Controller
         $stock->trade_code = $trade_code;
         $stock->volume = $volume;
 
-        $trade_code = Stock::select('trade_code')
-            ->groupBy('trade_code')
-            ->orderBy('date', 'ASC')
-            ->get();
+        $trade_code = Stock::select('trade_code')->groupBy('trade_code')->get();
         return view('jsn.custom_search', compact('trade_code','stock'));
         }
     
