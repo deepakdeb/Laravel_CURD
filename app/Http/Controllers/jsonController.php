@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Http\Controllers;
 use App\Models\Stock;
 
@@ -9,31 +10,42 @@ use Illuminate\Http\Request;
 
 class jsonController extends Controller
 {
-    public function index()
+
+
+    public function index(Request $request)
         {
-            $path = storage_path('stock_market_data.json'); 
-            $json =json_decode(file_get_contents($path), true); 
-            $i=0;
-            foreach($json as $stock_market) { 
-                
-                $i=$i+1;
-                $stock = new Stock;
-                $stock->date = $stock_market['date'];
-                $stock->trade_code = $stock_market['trade_code'];
-                $stock->high = $stock_market['high'];
-                $stock->low = $stock_market['low'];
-                $stock->open = $stock_market['open'];
-                $stock->close = $stock_market['close'];
-                $stock->volume = $stock_market['volume'];
-                $stock->save();
-                if ($i==100){
-                    break;
-                }
+            if(request()->ajax())
+            {
+                if(!empty($request->trade_code))
+                    {
+                    $data = Stock::select('date', 'trade_code', 'high', 'low', 'open', 'close','volume')
+                        ->where('trade_code', $request->trade_code)->orderBy('date', 'ASC')
+                        ->get();
+                    }
+                else
+                    {
+                    $data = Stock::select('date', 'trade_code', 'high', 'low', 'open', 'close','volume')->orderBy('date', 'ASC')
+                        ->get();
+                    }
+            return datatables()->of($data)->make(true);
             }
 
-            $data['stocks'] = json_decode(file_get_contents($path), true);
-        
-        return view('jsn.show', $data);
+        $date = Stock::select('date')->orderBy('date', 'ASC')->get()->toArray();
+        $close = Stock::select('close')->orderBy('date', 'ASC')->get()->toArray();
+        $trade_code = Stock::select('trade_code')->orderBy('date', 'ASC')->get()->toArray();
+        $volume = Stock::select('volume')->orderBy('date', 'ASC')->get()->toArray();
+
+        $stock = new Stock;
+        $stock->date = $date;
+        $stock->close = $close;
+        $stock->trade_code = $trade_code;
+        $stock->volume = $volume;
+
+        $trade_code = Stock::select('trade_code')
+            ->groupBy('trade_code')
+            ->orderBy('date', 'ASC')
+            ->get();
+        return view('jsn.custom_search', compact('trade_code','stock'));
         }
     
 }

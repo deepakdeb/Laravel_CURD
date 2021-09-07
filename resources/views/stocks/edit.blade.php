@@ -65,7 +65,7 @@
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <div class="form-group">
                     <strong> close</strong>
-                    <input type="text" name="high" value="{{ $stock->close }}" class="form-control" placeholder="">
+                    <input type="text" name="close" value="{{ $stock->close }}" class="form-control" placeholder="">
                     @error('close')
                         <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
                     @enderror

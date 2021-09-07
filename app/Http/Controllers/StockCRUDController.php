@@ -61,6 +61,7 @@ class StockCRUDController extends Controller
                 'close' => 'required',
                 'volume' => 'required'
             ]);
+            $stock_market = Stock::find($id);
             $stock_market->date = $request->date;
             $stock_market->trade_code = $request->trade_code;
             $stock_market->high = $request->high;
