@@ -60,8 +60,8 @@
             </div>
             <br />
    <div class="table-responsive">
-    <table id="data" class="table table-bordered table-striped">
-                    
+    <table id="customer_data" class="table table-bordered table-striped">
+                    <thead>
                         <tr>
                             <th>Date</th>
                             <th>trade code</th>
@@ -71,10 +71,7 @@
                             <th>close</th>
                             <th>volume</th>
                         </tr>
-
-                        
-                    
-                    
+                    </thead>
                 </table>
    </div>
             <br />
@@ -84,9 +81,71 @@
 
 
 <script>
+$(document).ready(function(){
 
+    fill_datatable();
 
-    
+    function fill_datatable( trade_code = '')
+    {
+        var dataTable = $('#customer_data').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax:{
+                url: "{{ route('json.index') }}",
+                data:{trade_code:trade_code}
+            },
+            columns: [
+                {
+                    data:'date',
+                    name:'date'
+                },
+                {
+                    data:'trade_code',
+                    name:'trade_code'
+                },
+                {
+                    data:'high',
+                    name:'high'
+                },
+                {
+                    data:'low',
+                    name:'low'
+                },
+                {
+                    data:'open',
+                    name:'open'
+                },
+                {
+                    data:'close',
+                    name:'close'
+                },
+                {
+                    data:'volume',
+                    name:'volume'
+                }
+            ]
+        });
+    }
+
+    $('#filter').click(function(){
+        var trade_code = $('#trade_code').val();
+
+        if(trade_code != '')
+        {
+            $('#customer_data').DataTable().destroy();
+            fill_datatable(trade_code);
+        }   
+
+    });
+
+    $('#reset').click(function(){
+        $('#trade_code').val('');
+        $('#customer_data').DataTable().destroy();
+        fill_datatable();
+    });
+
+});
+
 
 
 function myFun() {
@@ -166,7 +225,6 @@ function myFun() {
 
 
 var close = {!!json_encode($stock->close)!!} 
-console.log($stock->close);
 
 var date = {!!json_encode($stock->date)!!} 
 var trade_code = {!!json_encode($stock->trade_code)!!} 
